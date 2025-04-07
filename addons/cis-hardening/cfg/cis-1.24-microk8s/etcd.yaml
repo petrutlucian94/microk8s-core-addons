@@ -8,9 +8,25 @@ groups:
   - id: 2
     text: "Etcd Node Configuration"
     checks:
-      - id: 2.1
-        text: "Ensure that the --cert-file and --key-file arguments are set as appropriate (Automated)"
+      - id: 2.0
+        text: "Debug: print processes (Automated)"
         audit: "/bin/ps -ef | /bin/grep $etcdbin | /bin/grep -v grep"
+        tests:
+          bin_op: and
+          test_items:
+            - flag: "--cert-file"
+              env: "ETCD_CERT_FILE"
+            - flag: "--key-file"
+              env: "ETCD_KEY_FILE"
+        remediation: |
+          Not applicable. MicroK8s used dqlite and the communication to this service is done through a
+          local socket (/var/snap/microk8s/current/var/kubernetes/backend/kine.sock:12379) accessible
+          to users with root permissions.
+        scored: false
+
+      - id: 2.1
+        text: "Ensure that the --cert-file and --key-file arguments are set as appropriate - custom (Automated)"
+        audit: "/bin/ps -ef | /bin/grep $etcdbin"
         tests:
           bin_op: and
           test_items:
@@ -26,7 +42,7 @@ groups:
 
       - id: 2.2
         text: "Ensure that the --client-cert-auth argument is set to true (Automated)"
-        audit: "/bin/ps -ef | /bin/grep $etcdbin | /bin/grep -v grep"
+        audit: "/bin/ps -ef"
         tests:
           test_items:
             - flag: "--client-cert-auth"

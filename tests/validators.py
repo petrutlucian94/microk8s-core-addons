@@ -460,7 +460,9 @@ def validate_cis_hardening():
     Validate CIS hardening
     """
     wait_for_installation()
-    output = run_until_success("microk8s kube-bench")
+    output = kubectl("get all -A")
+    print(">>> kubectl get all -A \n%s\n" % output)
+    output = run_until_success("microk8s kube-bench -v 100")
 
     print(output)
     assert "41 checks WARN" in output
